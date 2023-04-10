@@ -1,1 +1,9 @@
-/views/
+/User.class
+/PayMethod.class
+/Nationality.class
+/Booking.class
+/DB/
+/DomainModel/
+/BusinessModel/
+/Controllers/
+/DAO/
