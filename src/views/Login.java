@@ -1,5 +1,5 @@
 package views;
-
+import Controllers.UserController;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,11 +12,14 @@ import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import java.awt.SystemColor;
 import java.awt.Font;
+import java.awt.HeadlessException;
+
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.SQLException;
 
 public class Login extends JFrame {
 
@@ -192,7 +195,12 @@ public class Login extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Login();
+				try {
+					Login();
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnLogin.setBackground(SystemColor.textHighlight);
@@ -234,19 +242,23 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 	
-	private void Login() {
-		 String Usuario= "admin";
-	     String Contraseña="admin";
+	private void Login(){
+		 UserController userC = new UserController();
+		 String Usuario= txtUsuario.getText();
+	     String Contraseña=new String (txtContrasena.getPassword());
 
-	        String contrase=new String (txtContrasena.getPassword());
-
-	        if(txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)){
-	            MenuUsuario menu = new MenuUsuario();
-	            menu.setVisible(true);
-	            dispose();	 
-	        }else {
-	            JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
-	        }
+	        try {
+				if(userC.login(Usuario,Contraseña)){
+				    MenuUsuario menu = new MenuUsuario();
+				    menu.setVisible(true);
+				    dispose();	 
+				}else {
+				    JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
+				}
+			} catch (HeadlessException | SQLException e) {
+				e.printStackTrace();
+			}
+		
 	} 
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
