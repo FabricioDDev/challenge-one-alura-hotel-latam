@@ -20,12 +20,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import DomainModel.Booking;
+import java.sql.Date;
 
-
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 @SuppressWarnings("serial")
 public class ReservasView extends JFrame {
 
@@ -243,35 +252,6 @@ public class ReservasView extends JFrame {
 		
 		
 		//Campos que guardaremos en la base de datos
-		txtFechaEntrada = new JDateChooser();
-		txtFechaEntrada.getCalendarButton().setBackground(SystemColor.textHighlight);
-		txtFechaEntrada.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/imagenes/icon-reservas.png")));
-		txtFechaEntrada.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 12));
-		txtFechaEntrada.setBounds(68, 161, 289, 35);
-		txtFechaEntrada.getCalendarButton().setBounds(268, 0, 21, 33);
-		txtFechaEntrada.setBackground(Color.WHITE);
-		txtFechaEntrada.setBorder(new LineBorder(SystemColor.window));
-		txtFechaEntrada.setDateFormatString("yyyy-MM-dd");
-		txtFechaEntrada.setFont(new Font("Roboto", Font.PLAIN, 18));
-		panel.add(txtFechaEntrada);
-
-		txtFechaSalida = new JDateChooser();
-		txtFechaSalida.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/imagenes/icon-reservas.png")));
-		txtFechaSalida.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 11));
-		txtFechaSalida.setBounds(68, 246, 289, 35);
-		txtFechaSalida.getCalendarButton().setBounds(267, 1, 21, 31);
-		txtFechaSalida.setBackground(Color.WHITE);
-		txtFechaSalida.setFont(new Font("Roboto", Font.PLAIN, 18));
-		txtFechaSalida.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
-			}
-		});
-		txtFechaSalida.setDateFormatString("yyyy-MM-dd");
-		txtFechaSalida.getCalendarButton().setBackground(SystemColor.textHighlight);
-		txtFechaSalida.setBorder(new LineBorder(new Color(255, 255, 255), 0));
-		panel.add(txtFechaSalida);
-
 		txtValor = new JTextField();
 		txtValor.setBackground(SystemColor.text);
 		txtValor.setHorizontalAlignment(SwingConstants.CENTER);
@@ -282,6 +262,45 @@ public class ReservasView extends JFrame {
 		txtValor.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		panel.add(txtValor);
 		txtValor.setColumns(10);
+		
+		java.util.Date date = Date.from(Instant.now());
+		
+		txtFechaEntrada = new JDateChooser();
+		txtFechaEntrada.setDateFormatString("12-02-2003");
+		txtFechaEntrada.getCalendarButton().setBackground(SystemColor.textHighlight);
+		txtFechaEntrada.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/imagenes/icon-reservas.png")));
+		txtFechaEntrada.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 12));
+		txtFechaEntrada.setBounds(68, 161, 289, 35);
+		txtFechaEntrada.getCalendarButton().setBounds(268, 0, 21, 33);
+		txtFechaEntrada.setBackground(Color.WHITE);
+		txtFechaEntrada.setBorder(new LineBorder(SystemColor.window));
+		txtFechaEntrada.setDateFormatString("yyyy-MM-dd");
+		txtFechaEntrada.setFont(new Font("Roboto", Font.PLAIN, 18));
+		txtFechaEntrada.setMinSelectableDate(date);
+		panel.add(txtFechaEntrada);
+
+		txtFechaSalida = new JDateChooser();
+		txtFechaSalida.setMinSelectableDate(date);
+		txtFechaSalida.setDateFormatString("12-02-2003");
+		txtFechaSalida.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/imagenes/icon-reservas.png")));
+		txtFechaSalida.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 11));
+		txtFechaSalida.setBounds(68, 246, 289, 35);
+		txtFechaSalida.getCalendarButton().setBounds(267, 1, 21, 31);
+		txtFechaSalida.setBackground(Color.WHITE);
+		txtFechaSalida.setFont(new Font("Roboto", Font.PLAIN, 18));
+		txtFechaSalida.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
+				costBooking();
+			}
+		});
+		txtFechaSalida.setDateFormatString("yyyy-MM-dd");
+		txtFechaSalida.getCalendarButton().setBackground(SystemColor.textHighlight);
+		txtFechaSalida.setBorder(new LineBorder(new Color(255, 255, 255), 0));
+		panel.add(txtFechaSalida);
+
+		
+		
 
 
 		txtFormaPago = new JComboBox();
@@ -311,6 +330,20 @@ public class ReservasView extends JFrame {
 		btnsiguiente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
 
+	}
+	private void costBooking() {
+        if(validateDates()) {
+            long diferencia = txtFechaSalida.getDate().getTime() - txtFechaEntrada.getDate().getTime();
+            long dias = diferencia / (1000 * 60 * 60 * 24);
+            long Value = 150 * dias;
+    		txtValor.setText("$" + Value);
+        }
+	}
+	private Boolean validateDates() {
+		if(!(txtFechaEntrada.getDate() != null & txtFechaSalida.getDate() != null)) {
+			return false;
+		}
+		return true;
 	}
 		
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	

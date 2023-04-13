@@ -8,7 +8,7 @@ public class Booking {
 	private Date ArrivalDate;
 	private Date DepartureDate;
 	private PayMethod PayMethod;
-	private BigDecimal Price;
+	private BigDecimal Price = new BigDecimal(150.70);
 	public int getId() {
 		return Id;
 	}
