@@ -8,7 +8,7 @@ public class Booking {
 	private int Id;
 	private LocalDate ArrivalDate;
 	private LocalDate DepartureDate;
-	private PayMethod PayMethod;
+	private PayMethod PayMethod = new PayMethod();
 	private BigDecimal Price = new BigDecimal(150.70);
 	public int getId() {
 		return Id;
@@ -31,8 +31,11 @@ public class Booking {
 	public PayMethod getPayMethod() {
 		return PayMethod;
 	}
-	public void setPayMethod(PayMethod payMethod) {
-		PayMethod = payMethod;
+	public void setPayMethodName(String name) {
+		PayMethod.setMethodName(name);
+	}
+	public void setPayMethodId(int Id) {
+		PayMethod.setId(Id);
 	}
 	public BigDecimal getPrice() {
 		return Price;

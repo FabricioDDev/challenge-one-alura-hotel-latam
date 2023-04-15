@@ -16,7 +16,7 @@ public class BookingDAO {
 		statement.setDate(1, java.sql.Date.valueOf(booking.getArrivalDate()));
 		statement.setDate(2, java.sql.Date.valueOf(booking.getDepartureDate()));
 		statement.setBigDecimal(3, booking.getPrice());
-		statement.setInt(4, 1);
+		statement.setInt(4, booking.getPayMethod().getId());
 		statement.execute();
 	}
 }

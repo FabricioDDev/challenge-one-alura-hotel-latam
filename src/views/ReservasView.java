@@ -328,8 +328,9 @@ public class ReservasView extends JFrame {
 					LocalDate dateS = txtFechaSalida.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					booking.setArrivalDate(date);
 					booking.setDepartureDate(dateS);
-					booking.setPayMethod(null);
-					booking.setPrice(new BigDecimal(400));
+					
+					booking.setPayMethodId(txtFormaPago.getSelectedIndex() + 1);
+					booking.setPrice(new BigDecimal(costBooking()));
 					try {
 						BookingC.insert(booking);
 					} catch (SQLException e1) {
