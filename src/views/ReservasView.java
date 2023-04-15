@@ -11,10 +11,16 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+
+import Controllers.BookingController;
+import DomainModel.Booking;
+
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-import java.text.Format;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -22,19 +28,14 @@ import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import DomainModel.Booking;
 import java.sql.Date;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
+
 @SuppressWarnings("serial")
 public class ReservasView extends JFrame {
 
@@ -267,6 +268,7 @@ public class ReservasView extends JFrame {
 		
 		txtFechaEntrada = new JDateChooser();
 		txtFechaEntrada.setDateFormatString("12-02-2003");
+		
 		txtFechaEntrada.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtFechaEntrada.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/imagenes/icon-reservas.png")));
 		txtFechaEntrada.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 12));
@@ -290,8 +292,11 @@ public class ReservasView extends JFrame {
 		txtFechaSalida.setFont(new Font("Roboto", Font.PLAIN, 18));
 		txtFechaSalida.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
-				costBooking();
+				if(validateDates()) {
+					long
+					bookingValue = costBooking();
+					txtValor.setText(String.valueOf(bookingValue));
+				}
 			}
 		});
 		txtFechaSalida.setDateFormatString("yyyy-MM-dd");
@@ -315,7 +320,22 @@ public class ReservasView extends JFrame {
 		btnsiguiente.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtFechaEntrada.getDate() != null && ReservasView.txtFechaSalida.getDate() != null) {		
+				if (validateDates()) {		
+					BookingController BookingC = new BookingController();
+					Booking booking = new Booking();
+					LocalDate date = txtFechaEntrada.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					
+					LocalDate dateS = txtFechaSalida.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					booking.setArrivalDate(date);
+					booking.setDepartureDate(dateS);
+					booking.setPayMethod(null);
+					booking.setPrice(new BigDecimal(400));
+					try {
+						BookingC.insert(booking);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					RegistroHuesped registro = new RegistroHuesped();
 					registro.setVisible(true);
 				} else {
@@ -331,19 +351,16 @@ public class ReservasView extends JFrame {
 
 
 	}
-	private void costBooking() {
-        if(validateDates()) {
-            long diferencia = txtFechaSalida.getDate().getTime() - txtFechaEntrada.getDate().getTime();
-            long dias = diferencia / (1000 * 60 * 60 * 24);
-            long Value = 150 * dias;
-    		txtValor.setText("$" + Value);
-        }
+	private long costBooking() {
+        	LocalDate Arrival = txtFechaEntrada.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate Departure = txtFechaSalida.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			return 150 * ChronoUnit.DAYS.between(Arrival, Departure);
 	}
 	private Boolean validateDates() {
-		if(!(txtFechaEntrada.getDate() != null & txtFechaSalida.getDate() != null)) {
-			return false;
+		if(txtFechaEntrada.getDate() != null & txtFechaSalida.getDate() != null){
+			return true;
 		}
-		return true;
+		else return false;
 	}
 		
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	

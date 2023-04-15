@@ -1,12 +1,13 @@
 package DomainModel;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 
 public class Booking {
 	private int Id;
-	private Date ArrivalDate;
-	private Date DepartureDate;
+	private LocalDate ArrivalDate;
+	private LocalDate DepartureDate;
 	private PayMethod PayMethod;
 	private BigDecimal Price = new BigDecimal(150.70);
 	public int getId() {
@@ -15,16 +16,16 @@ public class Booking {
 	public void setId(int id) {
 		Id = id;
 	}
-	public Date getArrivalDate() {
+	public LocalDate getArrivalDate() {
 		return ArrivalDate;
 	}
-	public void setArrivalDate(Date arrivalDate) {
+	public void setArrivalDate(LocalDate arrivalDate) {
 		ArrivalDate = arrivalDate;
 	}
-	public Date getDepartureDate() {
+	public LocalDate getDepartureDate() {
 		return DepartureDate;
 	}
-	public void setDepartureDate(Date departureDate) {
+	public void setDepartureDate(LocalDate departureDate) {
 		DepartureDate = departureDate;
 	}
 	public PayMethod getPayMethod() {
