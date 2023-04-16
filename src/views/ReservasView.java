@@ -35,6 +35,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import java.sql.Date;
 import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
 @SuppressWarnings("serial")
 public class ReservasView extends JFrame {
@@ -321,23 +322,19 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (validateDates()) {		
-					BookingController BookingC = new BookingController();
+					Random random = new Random();
 					Booking booking = new Booking();
 					LocalDate date = txtFechaEntrada.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					
 					LocalDate dateS = txtFechaSalida.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					booking.setArrivalDate(date);
 					booking.setDepartureDate(dateS);
+					booking.setNroBooking(random.nextInt(1000));
 					
 					booking.setPayMethodId(txtFormaPago.getSelectedIndex() + 1);
 					booking.setPrice(new BigDecimal(costBooking()));
-					try {
-						BookingC.insert(booking);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					RegistroHuesped registro = new RegistroHuesped();
+					
+					RegistroHuesped registro = new RegistroHuesped(booking);
 					registro.setVisible(true);
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");

@@ -5,11 +5,18 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 public class Booking {
+	public int getNroBooking() {
+		return NroBooking;
+	}
+	public void setNroBooking(int nroBooking) {
+		NroBooking = nroBooking;
+	}
 	private int Id;
 	private LocalDate ArrivalDate;
 	private LocalDate DepartureDate;
 	private PayMethod PayMethod = new PayMethod();
 	private BigDecimal Price = new BigDecimal(150.70);
+	private int NroBooking;
 	public int getId() {
 		return Id;
 	}
