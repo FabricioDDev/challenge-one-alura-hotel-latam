@@ -1,15 +1,19 @@
 package DomainModel;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Guest {
+	public Guest() {
+		Nationality = new Nationality();
+	}
 	private int Id;
 	private String Name;
 	private String Last_Name;
 	private Nationality Nationality;
-	private Date Born_Date;
+	private LocalDate Born_Date;
 	private String PhNumber;
-	private Booking booking;
+	private int bookingNumber;
 	public int getId() {
 		return Id;
 	}
@@ -34,10 +38,10 @@ public class Guest {
 	public void setNationality(Nationality nationality) {
 		Nationality = nationality;
 	}
-	public Date getBorn_Date() {
+	public LocalDate getBorn_Date() {
 		return Born_Date;
 	}
-	public void setBorn_Date(Date born_Date) {
+	public void setBorn_Date(LocalDate born_Date) {
 		Born_Date = born_Date;
 	}
 	public String getPhNumber() {
@@ -46,11 +50,11 @@ public class Guest {
 	public void setPhNumber(String phNumber) {
 		PhNumber = phNumber;
 	}
-	public Booking getBooking() {
-		return booking;
+	public int getBookingNumber() {
+		return bookingNumber;
 	}
-	public void setBooking(Booking booking) {
-		this.booking = booking;
+	public void setBookingNumber(int booking) {
+		this.bookingNumber = booking;
 	}
 	
 }
