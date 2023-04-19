@@ -6,8 +6,8 @@ public class Nationality {
 	public int getId() {
 		return Id;
 	}
-	public void setId(int id) {
-		Id = id;
+	public void setId(int string) {
+		Id = string;
 	}
 	public String getName() {
 		return Name;

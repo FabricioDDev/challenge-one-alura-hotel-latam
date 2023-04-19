@@ -5,7 +5,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+
+import Controllers.BookingController;
+import Controllers.GuestController;
+import DAO.BookingDAO;
+import DomainModel.Booking;
+import DomainModel.Guest;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -15,7 +24,10 @@ import java.awt.SystemColor;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import java.util.stream.Collectors;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -25,10 +37,11 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.SQLException;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
-
+	public int stateTable;
 	private JPanel contentPane;
 	private JTextField txtBuscar;
 	private JTable tbHuespedes;
@@ -88,6 +101,12 @@ public class Busqueda extends JFrame {
 		panel.setFont(new Font("Roboto", Font.PLAIN, 16));
 		panel.setBounds(20, 169, 865, 328);
 		contentPane.add(panel);
+		panel.addChangeListener( new ChangeListener() {
+			public void stateChanged(ChangeEvent e)
+			{
+		        stateTable = panel.getSelectedIndex();
+			}
+		});
 
 		
 		
@@ -101,11 +120,18 @@ public class Busqueda extends JFrame {
 		modelo.addColumn("Fecha Check Out");
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
+
+		BookingController bookingC = new BookingController();
+		try {
+			chargeTableBooking(bookingC.Listing());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
-		
-		
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbHuespedes.setFont(new Font("Roboto", Font.PLAIN, 16));
@@ -117,6 +143,13 @@ public class Busqueda extends JFrame {
 		modeloHuesped.addColumn("Nacionalidad");
 		modeloHuesped.addColumn("Telefono");
 		modeloHuesped.addColumn("Número de Reserva");
+		GuestController guestC = new GuestController();
+		try {
+			chargeTableGuest(guestC.Listing());
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHuespedes);
 		panel.addTab("Huéspedes", new ImageIcon(Busqueda.class.getResource("/imagenes/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
@@ -212,11 +245,47 @@ public class Busqueda extends JFrame {
 		separator_1_2.setBounds(539, 159, 193, 2);
 		contentPane.add(separator_1_2);
 		
+		
+		
 		JPanel btnbuscar = new JPanel();
+		
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				
+				try {
+					if(stateTable == 1) {
+						GuestController guestC = new GuestController();
+						List<Guest> elementosCreados;
+						if(txtBuscar.getText().isEmpty()) {
+							chargeTableGuest(guestC.Listing());
+						}
+						else {elementosCreados = guestC.Listing()
+							    .stream()
+							    .filter(persona -> persona.getName().equals(txtBuscar.getText()))
+							    .collect(Collectors.toList());
+						chargeTableGuest(elementosCreados);}
+					}
+					else if(stateTable == 0){
+						BookingController bookingC = new BookingController();
+						List<Booking> elementosCreados;
+						if(txtBuscar.getText().isEmpty()) {
+							chargeTableBooking(bookingC.Listing());
+						}
+						else {
+							elementosCreados = bookingC.Listing()
+								    .stream()
+								    .filter(reserva -> String.valueOf(reserva.getNroBooking()).equals(txtBuscar.getText()))
+								    .collect(Collectors.toList());
+							chargeTableBooking(elementosCreados);
+						}
+					}
+					
+				}
+				 catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -260,6 +329,23 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
+	}
+	public void chargeTableBooking(List<Booking> list) {
+			modelo.setRowCount(0);
+			for
+			 (Booking datos : list) {
+			    Object[] fila = {datos.getNroBooking(), datos.getArrivalDate(), datos.getDepartureDate(), datos.getPrice(), datos.getPayMethod().getMethodName()};
+			    modelo.addRow(fila);
+			}
+	}
+	
+	public void chargeTableGuest(List<Guest>list) {
+			modeloHuesped.setRowCount(0);
+			for
+			 (Guest datos : list) {
+			    Object[] fila = {datos.getId(), datos.getName(), datos.getLast_Name(), datos.getBorn_Date(), datos.getNationality().getName(), datos.getPhNumber(), datos.getBookingNumber()};
+			    modeloHuesped.addRow(fila);
+			}
 	}
 	
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
