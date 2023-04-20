@@ -16,4 +16,7 @@ public class BookingController {
 	public void Delete(int Id) throws SQLException {
 		bdao.delete(Id);
 	}
+	public void update(Booking booking) throws SQLException {
+		bdao.update(booking);
+	}
 }

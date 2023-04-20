@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,4 +55,19 @@ public class GuestDAO {
 		statement.setInt(1, Id);
 		statement.execute();
 	}
+	public void Update(Guest guest) throws SQLException {
+		Connection con = DB.DBFactory.getConnection();
+		PreparedStatement statement = con.prepareStatement("Update tbGuest set Name = ?, Last_Name = ?, BornDate = ?, Id_Nationality = ?, Tlfn = ?, NroBooking = ? where Id = ?;");
+		
+		statement.setString(1, guest.getName());
+		statement.setString(2, guest.getLast_Name());
+		statement.setDate(3, java.sql.Date.valueOf(guest.getBorn_Date()));
+		statement.setInt(4, guest.getNationality().getId());
+		statement.setString(5, guest.getPhNumber());
+		statement.setInt(6, guest.getBookingNumber());
+		statement.setInt(7, guest.getId());
+		//java.sql.Date.valueOf(guest.getBorn_Date())
+		statement.execute();
+	}
+
 }

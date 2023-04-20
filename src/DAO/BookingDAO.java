@@ -51,5 +51,16 @@ public class BookingDAO {
 		statement.setInt(1, Id);
 		statement.execute();
 	}
+	public void update(Booking booking) throws SQLException{
+		Connection con = DB.DBFactory.getConnection();
+		PreparedStatement statement = con.prepareStatement("update tbBooking set ArrivalDate = ?, DepartureDate = ?,  BookingValue = ?, NroBooking = ?, Id_PayMethod = ? where Id = ?;");
+		statement.setDate(1, java.sql.Date.valueOf(booking.getArrivalDate()));
+		statement.setDate(2, java.sql.Date.valueOf(booking.getDepartureDate()));
+		statement.setBigDecimal(3, booking.getPrice());
+		statement.setInt(4, booking.getNroBooking());
+		statement.setInt(5, booking.getPayMethod().getId());
+		statement.setInt(6, booking.getId());
+		statement.execute();
+	}
 }
  

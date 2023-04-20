@@ -310,10 +310,29 @@ public class Busqueda extends JFrame {
 		btnEditar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int row = tbReservas.getSelectedRow();
-				int Column = tbReservas.getSelectedColumn();
-				int Id = (int) tbReservas.getValueAt(row, Column);
-				txtBuscar.setText(String.valueOf(Id));
+				int row, Column, Captured;
+				try {
+					if(stateTable == 0) {
+						row = tbReservas.getSelectedRow();
+						Column = tbReservas.getSelectedColumn();
+						Captured = (int) tbReservas.getValueAt(row, Column);
+						ReservasView EditView = new ReservasView(Captured);
+						EditView.setVisible(true);
+						dispose();
+					}else {
+						row = tbHuespedes.getSelectedRow();
+						Column = tbHuespedes.getSelectedColumn();
+						Captured = (int) tbHuespedes.getValueAt(row, Column);
+						RegistroHuesped EditView = new RegistroHuesped(Captured);
+						EditView.setVisible(true);
+						dispose();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
 			}
 		});
 		

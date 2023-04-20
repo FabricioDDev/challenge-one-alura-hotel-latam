@@ -18,4 +18,7 @@ public class GuestController {
 	public void Delete(int Id) throws SQLException {
 		guestDao.delete(Id);
 	}
+	public void update(Guest guest) throws SQLException {
+		guestDao.Update(guest);
+	}
 }
