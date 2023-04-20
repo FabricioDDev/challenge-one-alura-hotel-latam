@@ -45,5 +45,11 @@ public class BookingDAO {
 		}
 		return list;
 	}
+	public void delete(int Id) throws SQLException {
+		Connection con = DB.DBFactory.getConnection();
+		PreparedStatement statement = con.prepareStatement("delete from tbBooking where NroBooking = ?;");
+		statement.setInt(1, Id);
+		statement.execute();
+	}
 }
  

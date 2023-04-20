@@ -15,4 +15,7 @@ public class GuestController {
 	public List<Guest> Listing() throws SQLException {
 		return guestDao.listing();
 	}
+	public void Delete(int Id) throws SQLException {
+		guestDao.delete(Id);
+	}
 }

@@ -48,4 +48,10 @@ public class GuestDAO {
 		return list;
 		
 	}
+	public void delete(int Id) throws SQLException {
+		Connection con = DB.DBFactory.getConnection();
+		PreparedStatement statement = con.prepareStatement("delete from tbGuest where Id = ?");
+		statement.setInt(1, Id);
+		statement.execute();
+	}
 }

@@ -307,6 +307,15 @@ public class Busqueda extends JFrame {
 		btnEditar.setBounds(635, 508, 122, 35);
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEditar);
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = tbReservas.getSelectedRow();
+				int Column = tbReservas.getSelectedColumn();
+				int Id = (int) tbReservas.getValueAt(row, Column);
+				txtBuscar.setText(String.valueOf(Id));
+			}
+		});
 		
 		JLabel lblEditar = new JLabel("EDITAR");
 		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -321,6 +330,37 @@ public class Busqueda extends JFrame {
 		btnEliminar.setBounds(767, 508, 122, 35);
 		btnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEliminar);
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row, Column, Captured;
+				if(stateTable == 0) {
+					row = tbReservas.getSelectedRow();
+					Column = tbReservas.getSelectedColumn();
+					Captured = (int) tbReservas.getValueAt(row, Column);
+					BookingController BookingC = new BookingController();
+					try {
+						BookingC.Delete(Captured);
+						chargeTableBooking(BookingC.Listing());
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}else {
+					GuestController GuestC = new GuestController();
+					row = tbHuespedes.getSelectedRow();
+					Column = tbHuespedes.getSelectedColumn();
+					Captured = (int) tbHuespedes.getValueAt(row, Column);
+					try {
+						GuestC.Delete(Captured);
+						chargeTableGuest(GuestC.Listing());
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		
 		JLabel lblEliminar = new JLabel("ELIMINAR");
 		lblEliminar.setHorizontalAlignment(SwingConstants.CENTER);

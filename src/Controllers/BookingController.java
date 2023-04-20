@@ -13,4 +13,7 @@ public class BookingController {
 	public List<Booking>Listing() throws SQLException{
 		return  bdao.listing();
 	}
+	public void Delete(int Id) throws SQLException {
+		bdao.delete(Id);
+	}
 }
